@@ -3,10 +3,14 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
+from .models import Habitaciones, Hoteles
 
 
 def index(request):
-    return render(request, "index.html")
+    hotel = Hoteles.objects.all()
+    return render(request, "index.html", {
+        "hoteles": hotel
+    })
 
 # Usuario
 
@@ -43,4 +47,26 @@ def signin(request):
             login(request, user)
             return redirect(index)
 
-# Hoteles
+# Habitaciones
+
+
+def habitaciones_de_hotel(request, hotel_id):
+    hotel = Hoteles.objects.get(pk=hotel_id)
+    habitaciones = hotel.habitaciones_set.all()
+    # contador
+    habitaciones_libres = hotel.habitaciones_set.filter(habilitado=True)
+    habitaciones_libres_count = habitaciones_libres.count()
+    return render(request, 'habitaciones.html', {'hotel': hotel, 'habitaciones': habitaciones, 'habitaciones_libres_count': habitaciones_libres_count})
+
+# Cambiar estado de habilitado
+
+
+def cambiar_estado_habitacion(request, habitacion_id):
+    habitacion = get_object_or_404(Habitaciones, pk=habitacion_id)
+    # Verifica si el formulario se envió con el método POST
+    if request.method == 'POST':
+        # Cambia el estado habilitado de la habitación
+        habitacion.habilitado = not habitacion.habilitado
+        habitacion.save()
+    # Redirige de vuelta a la página anterior
+    return redirect('index')

@@ -4,7 +4,31 @@
     <main class="container py-5">
         <section class="card card-body">
             <h1 class="h1 text-center">¡Descubre los hoteles que trabajan con nuestra app!</h1>
-            
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Telefono</th>
+                        <th scope="col">Direccion</th>
+                        <th scope="col">.............</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for hotel in hoteles %}
+                    <tr>
+                        <td><b>{{hotel.nombre|capfirst}}</b></td>
+                        <td>{{hotel.telefono}} </td>
+                        <td>{{hotel.direccion}}</td>
+                        <td>
+                            <form action="{% url 'habitaciones_de_hotel' hotel.id %}" method="POST">
+                                {% csrf_token %}
+                                <button class="btn btn-dark">Ver</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </section>
     </main>
 {% endblock %}

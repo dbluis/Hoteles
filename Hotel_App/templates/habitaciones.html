@@ -1,0 +1,49 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+    <main class="container py-5">
+        <section class="card card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col"><h1>{{ hotel.nombre }}</h1></th>
+                        <th scope="col">Habitaciones Libres: {{ habitaciones_libres_count }}</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    {% for habitacion in habitaciones %}
+                    {% if habitacion.habilitado == True %}
+                    <tr>
+                        <td><b>Habitacion: {{habitacion.habitacion}}</b></td>
+                        <td>
+                            <form action="{% url 'cambiar_estado_habitacion' habitacion.id %}" method="POST">
+                                {% csrf_token %}
+                                <button class="btn btn-success">Libre</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% for habitacion in habitaciones %}
+                    {% if habitacion.habilitado == False %}
+                    <tr>
+                        <td><b>Habitacion: {{habitacion.habitacion}}</b></td>
+                        <td>
+                            <form action="{% url 'cambiar_estado_habitacion' habitacion.id %}" method="POST">
+                                {% csrf_token %}
+                                <button class="btn btn-danger">Ocupado</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+                
+                
+            </table>
+        </section>
+    </main>
+
+{% endblock %}
