@@ -2,7 +2,20 @@
 
 {% block content %}
     <main class="container py-5">
+        <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" method="GET">
+            {% csrf_token %}
+            <div class="input-group">
+                <input type="text" class="form-control bg-light border-0 small" placeholder="Buscar..." name="buscar" value="">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-primary" type="submit">
+                        Buscar
+                    </button>
+                </div>
+            </div>
+        </form>
+
         <section class="card card-body">
+            {% if user.is_authenticated %}
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -40,9 +53,36 @@
                     {% endif %}
                     {% endfor %}
                 </tbody>
-                
-                
             </table>
+            {% else %}
+                <h2>{{hotel.nombre}} </h2>
+                <h3>{{hotel.descripcion}} </h3>
+                <p>La direccione de nuestro hotel: {{hotel.direccion}} </p>
+                <p>Para hacer reservas llame al numero: {{hotel.telefono}} </p>
+                <h4>Habitaciones Libres: {{ habitaciones_libres_count }}</h4>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                
+                            </th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for habitacion in habitaciones %}
+                        {% if habitacion.habilitado == True %}
+                        <tr>
+                            <td><b>Habitacion: {{habitacion.habitacion}}</b></td>
+                            <td>
+                                <button class="btn btn-success">Libre</button>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
         </section>
     </main>
 

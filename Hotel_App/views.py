@@ -4,12 +4,28 @@ from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from .models import Habitaciones, Hoteles
+from django.db.models import Q
 
 
 def index(request):
-    hotel = Hoteles.objects.all()
+    hoteles = Hoteles.objects.all()
+    for hotel in hoteles:
+        habitaciones_libres = hotel.habitaciones_set.filter(
+            habilitado=True).count()
+        hotel.habitaciones_libres_count = habitaciones_libres
+
+    # Buscador de habitaciones
+    busqueda = request.GET.get("buscar")
+
+    if busqueda:
+        hoteles = Hoteles.objects.filter(
+            Q(nombre__icontains=busqueda) |
+            Q(direccion__icontains=busqueda)
+        ).distinct()
+
+    # return
     return render(request, "index.html", {
-        "hoteles": hotel
+        "hoteles": hoteles
     })
 
 # Usuario
@@ -56,6 +72,16 @@ def habitaciones_de_hotel(request, hotel_id):
     # contador
     habitaciones_libres = hotel.habitaciones_set.filter(habilitado=True)
     habitaciones_libres_count = habitaciones_libres.count()
+
+    # Buscador de habitaciones
+    busqueda = request.GET.get("buscar")
+
+    if busqueda:
+        habitaciones = Habitaciones.objects.filter(
+            Q(habitacion__icontains=busqueda)
+        ).distinct()
+
+    # return
     return render(request, 'habitaciones.html', {'hotel': hotel, 'habitaciones': habitaciones, 'habitaciones_libres_count': habitaciones_libres_count})
 
 # Cambiar estado de habilitado

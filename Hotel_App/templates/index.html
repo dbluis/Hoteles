@@ -4,13 +4,27 @@
     <main class="container py-5">
         <section class="card card-body">
             <h1 class="h1 text-center">¡Descubre los hoteles que trabajan con nuestra app!</h1>
+            <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" method="GET">
+                {% csrf_token %}
+                <div class="input-group">
+                    <input type="text" class="form-control bg-light border-0 small" placeholder="Buscar..." name="buscar" value="">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" type="submit">
+                            Buscar
+                        </button>
+                    </div>
+                </div>
+            </form>
+            
             <table class="table table-hover">
                 <thead>
                     <tr>
                         <th scope="col">Nombre</th>
                         <th scope="col">Telefono</th>
                         <th scope="col">Direccion</th>
-                        <th scope="col">.............</th>
+                        <th scope="col">Habitaciones</th>
+                        <th scope="col">.......</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -19,6 +33,7 @@
                         <td><b>{{hotel.nombre|capfirst}}</b></td>
                         <td>{{hotel.telefono}} </td>
                         <td>{{hotel.direccion}}</td>
+                        <td><button class="btn btn-success">{{ hotel.habitaciones_libres_count }}</button></td>
                         <td>
                             <form action="{% url 'habitaciones_de_hotel' hotel.id %}" method="POST">
                                 {% csrf_token %}
