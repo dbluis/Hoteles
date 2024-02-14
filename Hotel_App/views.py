@@ -94,5 +94,7 @@ def cambiar_estado_habitacion(request, habitacion_id):
         # Cambia el estado habilitado de la habitación
         habitacion.habilitado = not habitacion.habilitado
         habitacion.save()
+        return redirect(request.META.get('HTTP_REFERER', 'index'))
+
     # Redirige de vuelta a la página anterior
-    return redirect('index')
+    return render(request, "habitaciones.html")

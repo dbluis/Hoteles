@@ -23,14 +23,14 @@
                         <th scope="col">Habitaciones Libres: {{ habitaciones_libres_count }}</th>
                     </tr>
                 </thead>
-                
+
                 <tbody>
                     {% for habitacion in habitaciones %}
                     {% if habitacion.habilitado == True %}
                     <tr>
                         <td><b>Habitacion: {{habitacion.habitacion}}</b></td>
                         <td>
-                            <form action="{% url 'cambiar_estado_habitacion' habitacion.id %}" method="POST">
+                            <form id="cambiarEstadoForm" action="{% url 'cambiar_estado_habitacion' habitacion.id %}" method="POST">
                                 {% csrf_token %}
                                 <button class="btn btn-success">Libre</button>
                             </form>
@@ -58,14 +58,13 @@
                 <h2>{{hotel.nombre}} </h2>
                 <h3>{{hotel.descripcion}} </h3>
                 <p>La direccione de nuestro hotel: {{hotel.direccion}} </p>
+                <p>Para mas informacion visite nuestra pagina: <a href="{{hotel.url}}" >{{hotel.nombre}}</a> </p>
                 <p>Para hacer reservas llame al numero: {{hotel.telefono}} </p>
                 <h4>Habitaciones Libres: {{ habitaciones_libres_count }}</h4>
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">
-                                
-                            </th>
+                            <th scope="col"></th>
                             <th scope="col"></th>
                         </tr>
                     </thead>
@@ -86,4 +85,35 @@
         </section>
     </main>
 
+    <script>
+        // Captura el evento submit del formulario
+        document.getElementById("cambiarEstadoForm").addEventListener("submit", function(event) {
+            // Evita que el formulario se envíe normalmente
+            event.preventDefault();
+            
+            // Envía el formulario utilizando Fetch API
+            fetch(this.action, {
+                method: this.method,
+                body: new FormData(this),
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",  // Agrega el token CSRF
+                }
+            })
+            .then(response => {
+                // Verifica si la solicitud fue exitosa
+                if (response.ok) {
+                    // Recarga la página después de un breve retraso (500 milisegundos) para asegurar que los cambios hayan sido guardados
+                    setTimeout(function() {
+                        location.reload();
+                    }, 500);
+                } else {
+                    // Maneja errores si la solicitud no fue exitosa
+                    console.error('Error al cambiar el estado de la habitación');
+                }
+            })
+            .catch(error => {
+                console.error('Error en la solicitud:', error);
+            });
+        });
+    </script>
 {% endblock %}
